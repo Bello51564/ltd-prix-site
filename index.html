@@ -345,16 +345,28 @@
             margin-bottom: 5px;
         }
         
-        .form-group input {
+        .form-group input, .form-group textarea {
             padding: 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
         }
         
-        .form-group input:focus {
+        .form-group input:focus, .form-group textarea:focus {
             border-color: #0055a4;
             outline: none;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .notes-info {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 5px;
         }
         
         .submit-btn {
@@ -670,6 +682,12 @@
                         <input type="text" id="location" placeholder="Où souhaitez-vous être livré?">
                     </div>
                     
+                    <div class="form-group">
+                        <label for="notes">Notes supplémentaires (optionnel):</label>
+                        <textarea id="notes" placeholder="Précisions sur la commande, instructions spéciales..."></textarea>
+                        <div class="notes-info">Ex: Heure de livraison préférée, allergies alimentaires, etc.</div>
+                    </div>
+                    
                     <button class="submit-btn" onclick="sendOrder()">Commander</button>
                 </div>
                 
@@ -678,7 +696,8 @@
                     <div class="help-text">1. Filtrez les produits par catégorie en utilisant les boutons</div>
                     <div class="help-text">2. Ajoutez des produits à votre panier en cliquant sur "Ajouter"</div>
                     <div class="help-text">3. Remplissez vos informations personnelles</div>
-                    <div class="help-text">4. Cliquez sur "Commander" pour envoyer votre commande sur Discord</div>
+                    <div class="help-text">4. Ajoutez des notes si nécessaire dans la zone prévue</div>
+                    <div class="help-text">5. Cliquez sur "Commander" pour envoyer votre commande sur Discord</div>
                 </div>
             </div>
         </div>
@@ -833,6 +852,7 @@
             const phone = document.getElementById('phone').value;
             const discord = document.getElementById('discord').value;
             const location = document.getElementById('location').value;
+            const notes = document.getElementById('notes').value;
             
             if (!name || !phone || !discord || !location) {
                 showNotification('Veuillez remplir tous les champs requis!', true);
@@ -858,7 +878,12 @@
                 total += item.price * item.quantity;
             });
             
-            orderMessage += `\n**Total: ${total}$**`;
+            orderMessage += `\n**Total: ${total}$**\n\n`;
+            
+            // Ajouter les notes si elles existent
+            if (notes) {
+                orderMessage += `**Notes supplémentaires:**\n${notes}`;
+            }
             
             // Send to Discord webhook
             try {
@@ -882,6 +907,7 @@
                     document.getElementById('phone').value = '';
                     document.getElementById('discord').value = 'bello230';
                     document.getElementById('location').value = '';
+                    document.getElementById('notes').value = '';
                 } else {
                     showNotification('Erreur lors de l\'envoi de la commande', true);
                 }
